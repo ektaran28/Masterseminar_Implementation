@@ -1,0 +1,24 @@
+# Reports and documents (not part of the implementation)
+*.docx
+*.tex
+*.bib
+*.pdf
+
+# Temporary Word/Office lock files
+~$*
+*.tmp
+
+# Evaluation screenshots / paper figures (not code artefacts)
+evaluation_of_paper1.png
+evaluation_of_paper2.png
+introduction image.png
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# OS artefacts
+.DS_Store
+Thumbs.db
