@@ -1,10 +1,10 @@
-# Knitting-Pattern Graph Layout — Master Seminar Implementation
+# A graph model and a layout algorithm for knitting patterns ,Master Seminar paper Implementation
 
-A faithful Python re-implementation of
+ Python re-implementation of A graph model and a layout algorithm for knitting patterns
 
 > **Kathryn Gray, Brian Bell, Stephen Kobourov.**
 > *A Graph Model and a Layout Algorithm for Knitting Patterns.*
-> Graph Drawing (GD) 2024 — arXiv:2406.13800.
+> Graph Drawing (GD) 2024 - arXiv:2406.13800.
 
 It implements the paper's two algorithms, its evaluation metrics, and the
 competing layout methods, then reproduces the paper's experimental findings and
@@ -19,10 +19,10 @@ A knitting pattern is converted into a **graph** (Algorithm 1):
 - **nodes** = stitches;
 - **yarn edges** (grey) = stitches adjacent along the yarn / needle;
 - **loop edges** (red) = a stitch pulled through the loop below it;
-- every edge has a **pre-specified length** (stitches are taller than wide, so
+- every edge has a **pre specified length** (stitches are taller than wide, so
   loop/column edges are longer than yarn/row edges).
 
-The graph is then drawn (Algorithm 2, **KnitLayout**): a crossing-free initial
+The graph is then drawn (Algorithm 2, **KnitLayout**): a crossing free initial
 layout followed by **safe force-directed steps** that pull edges towards their
 target lengths while *never* introducing an edge crossing.
 
@@ -68,21 +68,21 @@ python analysis.py
 
 Outputs are written to `results/`:
 
-- `results.csv`, `results.json` — raw numbers,
-- `results.md` — DEL / crossings / runtime tables (Experiments A & B),
-- `figures/*.png` — side-by-side layout comparisons.
+- `results.csv`, `results.json` - raw numbers,
+- `results.md` - DEL / crossings / runtime tables (Experiments A & B),
+- `figures/*.png` - side-by-side layout comparisons.
 
 ---
 
 ## Headline result
 
-On class-0 (planar) knitting patterns, **KnitLayout achieves the lowest
-edge-length error among the crossing-free, scope-correct methods and never
+On class0 (planar) knitting patterns, **KnitLayout achieves the lowest
+edge-length error among the crossing free, scope correct methods and never
 introduces a crossing**, reproducing the paper's central claim. KnitGrid is
 fastest but crosses edges at increases/decreases; SFDP is fast and smooth but
 does not target the prescribed lengths.
 
-DEL (edge-length error, lower is better) / crossings, from `experiments.py --mode full`:
+DEL (edge length error, lower is better) / crossings, from `experiments.py --mode full`:
 
 | Pattern | Nodes | KnitLayout | KnitGrid | SFDP | Kamada–Kawai |
 |---|---:|---|---|---|---|
@@ -93,12 +93,12 @@ DEL (edge-length error, lower is better) / crossings, from `experiments.py --mod
 | triangle (×35)   | 504 | **0.116 / 0** | 0.617 / 34 | 0.296 / 4 | 0.068 / 0 |
 
 KnitLayout's edge-length error is 3–8× smaller than KnitGrid and 2–4× smaller
-than SFDP, always crossing-free; KnitGrid's crossings grow with size and SFDP
+than SFDP, always crossing free; KnitGrid's crossings grow with size and SFDP
 starts crossing on the largest graph. (Kamada–Kawai reaches a lower DEL on these
-*planar* instances but gives no crossing guarantee — see the discussion.)
+*planar* instances but gives no crossing guarantee - see the discussion.)
 
 **Reproduction note:** matching the paper's quality requires the
-knitting-structure-aware initial layout the authors motivate (§5.1/§7); the
+knitting structure aware initial layout the authors motivate (§5.1/§7); the
 literal NetworkX planar init traps the hard-constraint step at DEL ≈ 0.4–0.8.
 Both inits are in the code (`knitting_layout`, `planar_layout`).
 
@@ -119,5 +119,5 @@ the catalogue of experiments.
 | `drop` | dropped stitch (long yarn float) | 1 | 1 | ✓ |
 | `c1b`, `c2b` | cables (complexity class 1) | 2/4 | 2/4 | ✗ |
 
-Cables are modelled for completeness but are non-planar (class 1) and out of
+Cables are modelled for completeness but are non planar (class 1) and out of
 scope for the planar layout, exactly as in the paper.
