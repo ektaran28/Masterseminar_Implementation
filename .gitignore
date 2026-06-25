@@ -22,3 +22,6 @@ __pycache__/
 # OS artefacts
 .DS_Store
 Thumbs.db
+EVALUATION.md
+evaluation.tex
+results/results.md

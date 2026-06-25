@@ -1,138 +1,123 @@
-# Knitting Pattern Graph Layout — Master Seminar Implementation
+# Knitting-Pattern Graph Layout — Master Seminar Implementation
 
-A Python implementation of the paper:
+A faithful Python re-implementation of
 
-> **"A Graph Model and a Layout Algorithm for Knitting Patterns"**
-> Gray, Bell & Kobourov (2024)
+> **Kathryn Gray, Brian Bell, Stephen Kobourov.**
+> *A Graph Model and a Layout Algorithm for Knitting Patterns.*
+> Graph Drawing (GD) 2024 — arXiv:2406.13800.
 
-This project models a knitting pattern as a mathematical graph, then lays it out visually so that edges never cross — matching the structure described in the paper.
+It implements the paper's two algorithms, its evaluation metrics, and the
+competing layout methods, then reproduces the paper's experimental findings and
+adds an independent evaluation.
 
 ---
 
 ## What it does
 
-A knitting pattern is represented as a graph where:
+A knitting pattern is converted into a **graph** (Algorithm 1):
 
-- **Nodes (dots)** = individual stitches
-- **Edges (lines)** come in two types:
-  - **Yarn edges** (grey) — stitches connected along the same strand of yarn
-  - **Loop edges** (red) — stitches pulled through one another (the defining action of knitting)
+- **nodes** = stitches;
+- **yarn edges** (grey) = stitches adjacent along the yarn / needle;
+- **loop edges** (red) = a stitch pulled through the loop below it;
+- every edge has a **pre-specified length** (stitches are taller than wide, so
+  loop/column edges are longer than yarn/row edges).
 
-The algorithm has three stages:
-
-1. **Parse** — reads real knitting pattern text (e.g. `k7, k2tog, yo, k1, yo, ssk, k7`) into a flat list of stitch operations
-2. **Build** — constructs the graph using a needle-stack model that mirrors how flat knitting physically flips every row
-3. **Layout** — starts from a planar embedding, then settles node positions using spring forces while rejecting any move that would create an edge crossing
-
-The demo pattern used is **"Antique Diamonds"** lace (Figure 1 from the paper), cast on with 19 stitches.
+The graph is then drawn (Algorithm 2, **KnitLayout**): a crossing-free initial
+layout followed by **safe force-directed steps** that pull edges towards their
+target lengths while *never* introducing an edge crossing.
 
 ---
 
-## Output
+## Project layout
 
-The script produces a side-by-side plot saved as `antique_diamonds.png`:
-
-| Left panel | Right panel |
-|---|---|
-| Planar starting layout (before settling) | Final settled layout with no crossings |
-| DEL score shown as a quality metric | Lower DEL = edge lengths closer to targets |
-
-DEL (Deviation from Edge Lengths) measures how evenly spaced the graph looks — lower is better.
+```
+knitviz/                 the library
+├── stitches.py          stitch dictionary (Table 1) + base edge lengths
+├── patterns.py          pattern text parser + pattern generators
+├── graph_model.py       Algorithm 1 (pattern -> graph) + knittability checks
+├── layout.py            Algorithm 2 (KnitLayout: init + safe FDA, 3 forces)
+├── baselines.py         KnitGrid (Counts), SFDP (Graphviz), Kamada-Kawai
+├── metrics.py           DEL (Eq. 1) and crossing count
+└── draw.py              figure rendering
+experiments.py           reproduction experiments (Tables 3–6) -> results/
+analysis.py              ablations, convergence and graph-model checks
+EVALUATION.md            the written evaluation / experiment catalogue
+```
 
 ---
 
 ## Requirements
 
-- Python 3.8+
-- [NetworkX](https://networkx.org/)
-- [Matplotlib](https://matplotlib.org/)
-- [NumPy](https://numpy.org/)
-
-Install all dependencies with:
-
-```bash
-pip install networkx matplotlib numpy
-```
+- Python 3.9+ (developed and tested on Python 3.10)
+- `networkx`, `numpy`, `scipy`, `matplotlib`  (`pip install -r requirements.txt`)
+- **Optional:** [Graphviz](https://graphviz.org/) on `PATH` (provides `sfdp`)
+  for the SFDP comparison. If absent, SFDP is skipped automatically.
 
 ---
 
 ## How to run
 
 ```bash
-python implemention_ms.py
+# main reproduction experiments (DEL, crossings, runtime + figures)
+python experiments.py --mode quick      # ~1–2 min
+python experiments.py --mode full       # paper-scale, several minutes
+
+# supplementary experiments: ablations, convergence, model unit-checks
+python analysis.py
 ```
 
-The script will:
-1. Print graph statistics (node count, edge count, planarity check)
-2. Print DEL scores before and after layout settling
-3. Display the plot and save it as `antique_diamonds.png`
+Outputs are written to `results/`:
 
-Example console output:
-
-```
-Built graph: 170 dots, 207 lines, planar = True
-DEL before: 0.847
-DEL after:  0.213
-```
+- `results.csv`, `results.json` — raw numbers,
+- `results.md` — DEL / crossings / runtime tables (Experiments A & B),
+- `figures/*.png` — side-by-side layout comparisons.
 
 ---
 
-## Supported stitch types
+## Headline result
 
-| Symbol | Name | Nodes created | Nodes consumed |
-|---|---|---|---|
-| `k` | Knit | 1 | 1 |
-| `p` | Purl | 1 | 1 |
-| `yo` | Yarn over | 1 | 0 (creates a hole) |
-| `k2tog` | Knit 2 together | 1 | 2 (decrease) |
-| `ssk` | Slip slip knit | 1 | 2 (decrease) |
+On class-0 (planar) knitting patterns, **KnitLayout achieves the lowest
+edge-length error among the crossing-free, scope-correct methods and never
+introduces a crossing**, reproducing the paper's central claim. KnitGrid is
+fastest but crosses edges at increases/decreases; SFDP is fast and smooth but
+does not target the prescribed lengths.
 
----
+DEL (edge-length error, lower is better) / crossings, from `experiments.py --mode full`:
 
-## Pattern syntax supported by the parser
+| Pattern | Nodes | KnitLayout | KnitGrid | SFDP | Kamada–Kawai |
+|---|---:|---|---|---|---|
+| stockinette      | 208 | **0.061 / 0** | 0.164 / 0  | 0.269 / 0 | 0.017 / 0 |
+| antique_diamonds | 247 | **0.058 / 0** | 0.292 / 12 | 0.259 / 0 | 0.041 / 0 |
+| eyelet_lace      | 273 | **0.064 / 0** | 0.265 / 0  | 0.228 / 0 | 0.046 / 0 |
+| drop_stitch      | 234 | **0.124 / 0** | 0.205 / 0  | 0.310 / 0 | 0.118 / 0 |
+| triangle (×35)   | 504 | **0.116 / 0** | 0.617 / 34 | 0.296 / 4 | 0.068 / 0 |
 
-| Syntax | Meaning |
-|---|---|
-| `k7` | 7 knit stitches |
-| `k2tog` | one decrease stitch |
-| `yo` | one yarn over |
-| `(k2tog, yo) 3 times` | repeat group 3 times |
-| `(yo, ssk) twice` | repeat group 2 times |
-| `purl to end` | fill the entire row with purls |
-| `knit to end` | fill the entire row with knits |
+KnitLayout's edge-length error is 3–8× smaller than KnitGrid and 2–4× smaller
+than SFDP, always crossing-free; KnitGrid's crossings grow with size and SFDP
+starts crossing on the largest graph. (Kamada–Kawai reaches a lower DEL on these
+*planar* instances but gives no crossing guarantee — see the discussion.)
 
----
+**Reproduction note:** matching the paper's quality requires the
+knitting-structure-aware initial layout the authors motivate (§5.1/§7); the
+literal NetworkX planar init traps the hard-constraint step at DEL ≈ 0.4–0.8.
+Both inits are in the code (`knitting_layout`, `planar_layout`).
 
-## Tuning the demo
-
-Inside `implemention_ms.py`, two constants control the output:
-
-```python
-USE_ROWS = 8      # number of rows to render (higher = bigger graph, slower)
-ITERS    = 350    # layout settling iterations (higher = better quality)
-STEP     = 0.08   # step size per iteration
-```
-
-Increasing `USE_ROWS` to 20 renders the full diamond motif but takes longer to settle.
+See [EVALUATION.md](EVALUATION.md) for the full setup, results, comparison and
+the catalogue of experiments.
 
 ---
 
-## Project structure
+## Supported stitches (Table 1)
 
-```
-master_seminar/
-├── implemention_ms.py            # main script
-├── antique_diamonds.png          # output image (generated on run)
-├── Figure_1.png                  # reference figure from the paper
-├── knitting_patterns_report.tex  # LaTeX seminar report
-├── knitting_patterns_references.bib  # bibliography
-├── draft_master_report.docx      # draft report (Word)
-└── Masterseminar_Implementaation/
-    └── README.md                 # this file
-```
+| Token | Name | nodes added | loops below | planar |
+|---|---|---:|---:|:--:|
+| `k`/`p` | knit / purl | 1 | 1 | ✓ |
+| `yo`, `m1` | yarn over / make one (increase) | 1 | 0 | ✓ |
+| `kfb` | knit front & back (increase) | 2 | 1 | ✓ |
+| `k2tog`, `ssk` | decreases | 1 | 2 | ✓ |
+| `sl1-k2-psso` | central double decrease | 1 | 3 | ✓ |
+| `drop` | dropped stitch (long yarn float) | 1 | 1 | ✓ |
+| `c1b`, `c2b` | cables (complexity class 1) | 2/4 | 2/4 | ✗ |
 
----
-
-## Reference
-
-Gray, A., Bell, S., & Kobourov, S. (2024). *A Graph Model and a Layout Algorithm for Knitting Patterns*. Proceedings of the 32nd International Symposium on Graph Drawing and Network Visualization (GD 2024).
+Cables are modelled for completeness but are non-planar (class 1) and out of
+scope for the planar layout, exactly as in the paper.
