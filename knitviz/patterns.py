@@ -1,18 +1,9 @@
-"""Knitting-pattern text parser and a small library of test patterns.
-
-A pattern is stored the way a knitter writes it: a cast-on count plus one
-string per row, e.g. ``"k7, k2tog, yo, k1, yo, ssk, k7"``.  :func:`parse_row`
-expands a row string into a flat list of stitch tokens, resolving repeats
-(``(k2tog, yo) 3 times``) and the ``knit/purl to end`` shorthand against the
-number of live stitches currently on the needle.
-"""
-
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass
 
-from .stitches import STITCHES
+from .stitches import get, is_known
 
 
 @dataclass(frozen=True)
@@ -38,15 +29,14 @@ def normalise(text: str) -> str:
 
 
 def _expand_token(token: str) -> list[str]:
-    """Expand a single token such as ``k7`` or ``yo`` into stitch names."""
     token = token.strip()
     if not token:
         return []
-    m = re.fullmatch(r"([a-z][a-z0-9-]*?)(\d+)", token)
-    if m and m.group(1) in STITCHES:
-        return [m.group(1)] * int(m.group(2))
-    if token in STITCHES:
+    if is_known(token):
         return [token]
+    m = re.fullmatch(r"([a-z][a-z0-9-]*?)(\d+)", token)
+    if m and is_known(m.group(1)):
+        return [m.group(1)] * int(m.group(2))
     raise ValueError(f"Unknown stitch token: {token!r}")
 
 
@@ -54,7 +44,6 @@ _GROUP_RE = re.compile(r"\(([^)]*)\)\s*(twice|\d+\s*times)|([a-z0-9-]+)")
 
 
 def parse_row(text: str, live_count: int) -> list[str]:
-    """Expand one written row into a flat list of stitch tokens."""
     text = normalise(text)
 
     # Whole-row shorthands.
@@ -66,7 +55,7 @@ def parse_row(text: str, live_count: int) -> list[str]:
     if "to end" in text:
         prefix_text, tail = text.rsplit(",", 1)
         prefix = parse_row(prefix_text, live_count)
-        consumed = sum(STITCHES[s].below for s in prefix)
+        consumed = sum(get(s).below for s in prefix)
         fill_stitch = "p" if "purl" in tail else "k"
         remaining = max(0, live_count - consumed)
         return prefix + [fill_stitch] * remaining
@@ -90,13 +79,13 @@ def parse_row(text: str, live_count: int) -> list[str]:
 
 
 def parse_pattern(pattern: Pattern) -> tuple[int, list[list[str]]]:
-    """Return ``(cast_on, rows_as_token_lists)`` with live-count tracking."""
     live = pattern.cast_on
     parsed: list[list[str]] = []
     for i, text in enumerate(pattern.rows, start=1):
         row = parse_row(text, live)
-        delta = sum(STITCHES[s].add - STITCHES[s].below for s in row)
-        live += delta
+        consumed = sum(get(s).below for s in row)
+        added = sum(get(s).add for s in row)
+        live += added - consumed
         if live < 0:
             raise ValueError(
                 f"{pattern.name}: row {i} consumes more live stitches than available"
@@ -109,7 +98,6 @@ def parse_pattern(pattern: Pattern) -> tuple[int, list[list[str]]]:
 # Pattern library
 # --------------------------------------------------------------------------- #
 def stockinette(rows: int, width: int) -> Pattern:
-    """Plain stockinette rectangle -- the simplest planar knit (baseline)."""
     body = []
     for r in range(rows):
         body.append("knit to end" if r % 2 == 0 else "purl to end")
@@ -148,12 +136,6 @@ def antique_diamonds(rows: int = 20, cast_on: int = 19) -> Pattern:
 
 
 def triangle(rows: int, cast_on: int = 5) -> Pattern:
-    """Centre-out triangle shawl: a yarn-over increase early in each RS row.
-
-    This is the simple growing triangle of Table 6 -- two stitches are added
-    every right-side row, so the live count (and the graph) grows quadratically
-    with the number of rows.
-    """
     body: list[str] = []
     for r in range(1, rows + 1):
         if r % 2 == 1:
@@ -164,7 +146,6 @@ def triangle(rows: int, cast_on: int = 5) -> Pattern:
 
 
 def eyelet_lace(rows: int, cast_on: int = 21) -> Pattern:
-    """A regular eyelet (k2tog, yo) lace -- mesh-like, fully planar."""
     body: list[str] = []
     for r in range(1, rows + 1):
         if r % 4 == 2:
@@ -177,9 +158,6 @@ def eyelet_lace(rows: int, cast_on: int = 21) -> Pattern:
 
 
 def drop_stitch(rows: int, cast_on: int = 18, drop_every: int = 6) -> Pattern:
-    """A drop-stitch fabric: every ``drop_every`` rows a row of dropped stitches
-    stretches the yarn (Fig. 7).  Dropped stitches are class 0 but exercise the
-    variable-edge-length part of the model."""
     drop_row = ", ".join(["k1", "drop"] * (cast_on // 2))
     if cast_on % 2:
         drop_row += ", k1"
@@ -194,12 +172,19 @@ def drop_stitch(rows: int, cast_on: int = 18, drop_every: int = 6) -> Pattern:
     return Pattern(f"drop_stitch_{rows}", cast_on, body, family="drop")
 
 
-def library() -> dict[str, Pattern]:
-    """A representative class-0 set spanning plain / lace / drop / triangle.
+def honeycomb_cable() -> Pattern:
+    body = [
+        "k4, c1f, c1b, k4", "purl to end",
+        "k2, (c1f, c1b) 2 times, k2", "purl to end",
+        "(c1f, c1b) 3 times", "purl to end",
+        "(c1b, c1f) 3 times", "purl to end",
+        "k2, (c1b, c1f) 2 times, k2", "purl to end",
+        "k4, c1b, c1f, k4", "purl to end",
+    ]
+    return Pattern("honeycomb_cable", 12, body, family="cable")
 
-    (``garter`` is intentionally omitted: knit and purl have identical
-    subgraphs in Table 1, so garter and stockinette yield the same graph.)
-    """
+
+def library() -> dict[str, Pattern]:
     return {
         "stockinette": stockinette(12, 16),
         "antique_diamonds": antique_diamonds(12, 19),

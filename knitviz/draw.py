@@ -1,9 +1,7 @@
-"""Drawing helpers: render a knitting graph with yarn edges in grey and loop
-edges in red, matching the figure convention of the paper."""
-
 from __future__ import annotations
 
 from pathlib import Path
+from math import hypot
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -26,13 +24,34 @@ def draw_layout(g: nx.Graph, pos: dict, ax, title: str = "") -> None:
         node_size=10, width=0.7,
         edge_color=_edge_colors(g), node_color=NODE_COLOR,
     )
+    for signature in g.graph.get("crossing_signature", []):
+        (a, b), (c, d) = signature["edges"]
+        x1, y1 = pos[a]
+        x2, y2 = pos[b]
+        x3, y3 = pos[c]
+        x4, y4 = pos[d]
+        den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+        if abs(den) < 1e-12:
+            continue
+        t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den
+        x, y = x1 + t * (x2 - x1), y1 + t * (y2 - y1)
+        over = signature["over"]
+        u, v = over
+        dx, dy = pos[v][0] - pos[u][0], pos[v][1] - pos[u][1]
+        length = hypot(dx, dy)
+        if length:
+            gap = 0.06 / length
+            ax.plot([x - gap * dx, x + gap * dx], [y - gap * dy, y + gap * dy],
+                    color="white", linewidth=2.4, zorder=2)
+            color = YARN_COLOR if g.edges[over].get("kind") == "yarn" else LOOP_COLOR
+            ax.plot([x - gap * dx, x + gap * dx], [y - gap * dy, y + gap * dy],
+                    color=color, linewidth=0.9, zorder=3)
     ax.set_title(title, fontsize=9)
     ax.set_aspect("equal")
     ax.set_axis_off()
 
 
 def compare_figure(g: nx.Graph, results: dict, out_path: Path, suptitle: str = "") -> None:
-    """`results` maps algorithm name -> dict with keys pos, del, crossings, time."""
     drawable = [(name, r) for name, r in results.items() if r.get("pos") is not None]
     if not drawable:
         return

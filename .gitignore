@@ -11,7 +11,7 @@
 # Evaluation screenshots / paper figures (not code artefacts)
 evaluation_of_paper1.png
 evaluation_of_paper2.png
-introduction image.png
+
 
 # Python cache
 __pycache__/
@@ -22,6 +22,4 @@ __pycache__/
 # OS artefacts
 .DS_Store
 Thumbs.db
-EVALUATION.md
-evaluation.tex
-results/results.md
+

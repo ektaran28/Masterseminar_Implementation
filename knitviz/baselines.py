@@ -1,19 +1,3 @@
-"""Comparison algorithms (Section 6.1).
-
-* ``knit_grid_layout`` -- the grid placement of Counts ("KnitGrid"): every
-  stitch is dropped on its (column, -row) grid point.  Fast and simple, but it
-  can introduce crossings and cannot represent every technique.
-* ``sfdp_layout`` -- Graphviz SFDP [25], a scalable force-directed placement
-  with prism overlap removal.  High quality but does not avoid crossings.
-* ``kamada_kawai_layout`` -- a classic stress/force-directed embedder that also
-  targets edge lengths but ignores planarity (a stand-in for the family of
-  force-directed methods discussed in the paper).
-
-ImPrEd [34] is described in the paper but relies on Tulip, which is not part of
-this Python environment; it is therefore reported as "not available" rather
-than approximated.
-"""
-
 from __future__ import annotations
 
 import shutil

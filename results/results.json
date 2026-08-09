@@ -9,7 +9,11 @@
     "algorithm": "KnitLayout",
     "del": 0.0608,
     "crossings": 0,
-    "runtime_s": 16.673,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 49.091,
     "status": "ok"
   },
   {
@@ -22,7 +26,11 @@
     "algorithm": "KnitGrid",
     "del": 0.1642,
     "crossings": 0,
-    "runtime_s": 0.391,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.411,
     "status": "ok"
   },
   {
@@ -35,7 +43,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0168,
     "crossings": 0,
-    "runtime_s": 1.491,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.407,
     "status": "ok"
   },
   {
@@ -48,7 +60,11 @@
     "algorithm": "SFDP",
     "del": 0.2693,
     "crossings": 0,
-    "runtime_s": 1.318,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.293,
     "status": "ok"
   },
   {
@@ -61,7 +77,11 @@
     "algorithm": "KnitLayout",
     "del": 0.0578,
     "crossings": 0,
-    "runtime_s": 19.955,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 66.838,
     "status": "ok"
   },
   {
@@ -74,7 +94,11 @@
     "algorithm": "KnitGrid",
     "del": 0.2916,
     "crossings": 12,
-    "runtime_s": 0.633,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 12,
+    "misplaced": 0,
+    "runtime_s": 0.614,
     "status": "ok"
   },
   {
@@ -87,7 +111,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.041,
     "crossings": 0,
-    "runtime_s": 1.018,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.068,
     "status": "ok"
   },
   {
@@ -100,7 +128,11 @@
     "algorithm": "SFDP",
     "del": 0.2591,
     "crossings": 0,
-    "runtime_s": 1.512,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.378,
     "status": "ok"
   },
   {
@@ -113,7 +145,11 @@
     "algorithm": "KnitLayout",
     "del": 0.0639,
     "crossings": 0,
-    "runtime_s": 24.538,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 85.256,
     "status": "ok"
   },
   {
@@ -126,7 +162,11 @@
     "algorithm": "KnitGrid",
     "del": 0.2649,
     "crossings": 0,
-    "runtime_s": 0.753,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.705,
     "status": "ok"
   },
   {
@@ -139,7 +179,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0465,
     "crossings": 0,
-    "runtime_s": 1.317,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.339,
     "status": "ok"
   },
   {
@@ -152,7 +196,11 @@
     "algorithm": "SFDP",
     "del": 0.2284,
     "crossings": 0,
-    "runtime_s": 1.731,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.663,
     "status": "ok"
   },
   {
@@ -165,7 +213,11 @@
     "algorithm": "KnitLayout",
     "del": 0.1244,
     "crossings": 0,
-    "runtime_s": 17.844,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 61.013,
     "status": "ok"
   },
   {
@@ -178,7 +230,11 @@
     "algorithm": "KnitGrid",
     "del": 0.2046,
     "crossings": 0,
-    "runtime_s": 0.463,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.614,
     "status": "ok"
   },
   {
@@ -191,7 +247,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.1176,
     "crossings": 0,
-    "runtime_s": 0.95,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.899,
     "status": "ok"
   },
   {
@@ -204,7 +264,11 @@
     "algorithm": "SFDP",
     "del": 0.3104,
     "crossings": 0,
-    "runtime_s": 1.441,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.326,
     "status": "ok"
   },
   {
@@ -217,7 +281,11 @@
     "algorithm": "KnitLayout",
     "del": 0.0809,
     "crossings": 0,
-    "runtime_s": 6.181,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 12.379,
     "status": "ok"
   },
   {
@@ -230,7 +298,11 @@
     "algorithm": "KnitGrid",
     "del": 0.5031,
     "crossings": 10,
-    "runtime_s": 0.065,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 10,
+    "misplaced": 0,
+    "runtime_s": 0.083,
     "status": "ok"
   },
   {
@@ -243,7 +315,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0376,
     "crossings": 0,
-    "runtime_s": 0.127,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.13,
     "status": "ok"
   },
   {
@@ -256,7 +332,11 @@
     "algorithm": "SFDP",
     "del": 0.1409,
     "crossings": 0,
-    "runtime_s": 0.799,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.73,
     "status": "ok"
   },
   {
@@ -269,7 +349,11 @@
     "algorithm": "KnitLayout",
     "del": 0.0604,
     "crossings": 0,
-    "runtime_s": 1.684,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.655,
     "status": "ok"
   },
   {
@@ -282,7 +366,11 @@
     "algorithm": "KnitGrid",
     "del": 0.4203,
     "crossings": 4,
-    "runtime_s": 0.019,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 4,
+    "misplaced": 0,
+    "runtime_s": 0.009,
     "status": "ok"
   },
   {
@@ -295,7 +383,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0311,
     "crossings": 0,
-    "runtime_s": 0.04,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.024,
     "status": "ok"
   },
   {
@@ -308,7 +400,11 @@
     "algorithm": "SFDP",
     "del": 0.1695,
     "crossings": 0,
-    "runtime_s": 0.926,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.612,
     "status": "ok"
   },
   {
@@ -321,7 +417,11 @@
     "algorithm": "KnitLayout",
     "del": 0.0751,
     "crossings": 0,
-    "runtime_s": 4.722,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 6.654,
     "status": "ok"
   },
   {
@@ -334,7 +434,11 @@
     "algorithm": "KnitGrid",
     "del": 0.5031,
     "crossings": 10,
-    "runtime_s": 0.085,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 10,
+    "misplaced": 0,
+    "runtime_s": 0.072,
     "status": "ok"
   },
   {
@@ -347,7 +451,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0376,
     "crossings": 0,
-    "runtime_s": 0.15,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.336,
     "status": "ok"
   },
   {
@@ -360,7 +468,11 @@
     "algorithm": "SFDP",
     "del": 0.1409,
     "crossings": 0,
-    "runtime_s": 1.025,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.191,
     "status": "ok"
   },
   {
@@ -373,7 +485,11 @@
     "algorithm": "KnitLayout",
     "del": 0.0894,
     "crossings": 0,
-    "runtime_s": 7.41,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 16.667,
     "status": "ok"
   },
   {
@@ -386,7 +502,11 @@
     "algorithm": "KnitGrid",
     "del": 0.5501,
     "crossings": 16,
-    "runtime_s": 0.331,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 16,
+    "misplaced": 0,
+    "runtime_s": 0.334,
     "status": "ok"
   },
   {
@@ -399,7 +519,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0493,
     "crossings": 0,
-    "runtime_s": 0.626,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.541,
     "status": "ok"
   },
   {
@@ -412,7 +536,11 @@
     "algorithm": "SFDP",
     "del": 0.1104,
     "crossings": 0,
-    "runtime_s": 1.239,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.028,
     "status": "ok"
   },
   {
@@ -425,7 +553,11 @@
     "algorithm": "KnitLayout",
     "del": 0.1028,
     "crossings": 0,
-    "runtime_s": 13.521,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 36.969,
     "status": "ok"
   },
   {
@@ -438,7 +570,11 @@
     "algorithm": "KnitGrid",
     "del": 0.5805,
     "crossings": 22,
-    "runtime_s": 0.772,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 22,
+    "misplaced": 0,
+    "runtime_s": 0.619,
     "status": "ok"
   },
   {
@@ -451,7 +587,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0577,
     "crossings": 0,
-    "runtime_s": 1.442,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.485,
     "status": "ok"
   },
   {
@@ -464,7 +604,11 @@
     "algorithm": "SFDP",
     "del": 0.3119,
     "crossings": 0,
-    "runtime_s": 1.611,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 1.416,
     "status": "ok"
   },
   {
@@ -477,7 +621,11 @@
     "algorithm": "KnitLayout",
     "del": 0.1092,
     "crossings": 0,
-    "runtime_s": 21.168,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 74.2,
     "status": "ok"
   },
   {
@@ -490,7 +638,11 @@
     "algorithm": "KnitGrid",
     "del": 0.6018,
     "crossings": 28,
-    "runtime_s": 1.396,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 28,
+    "misplaced": 0,
+    "runtime_s": 1.574,
     "status": "ok"
   },
   {
@@ -503,7 +655,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0635,
     "crossings": 0,
-    "runtime_s": 3.881,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 3.37,
     "status": "ok"
   },
   {
@@ -516,7 +672,11 @@
     "algorithm": "SFDP",
     "del": 0.2286,
     "crossings": 0,
-    "runtime_s": 3.065,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 2.455,
     "status": "ok"
   },
   {
@@ -529,7 +689,11 @@
     "algorithm": "KnitLayout",
     "del": 0.1159,
     "crossings": 0,
-    "runtime_s": 31.624,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 133.04,
     "status": "ok"
   },
   {
@@ -542,7 +706,11 @@
     "algorithm": "KnitGrid",
     "del": 0.6174,
     "crossings": 34,
-    "runtime_s": 2.526,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 34,
+    "misplaced": 0,
+    "runtime_s": 2.728,
     "status": "ok"
   },
   {
@@ -555,7 +723,11 @@
     "algorithm": "Kamada-Kawai",
     "del": 0.0677,
     "crossings": 0,
-    "runtime_s": 6.592,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 6.416,
     "status": "ok"
   },
   {
@@ -568,7 +740,79 @@
     "algorithm": "SFDP",
     "del": 0.2958,
     "crossings": 4,
-    "runtime_s": 3.671,
+    "required": 0,
+    "missing": 0,
+    "unexpected": 4,
+    "misplaced": 0,
+    "runtime_s": 3.594,
+    "status": "ok"
+  },
+  {
+    "experiment": "C_cables",
+    "pattern": "honeycomb_cable",
+    "family": "cable",
+    "nodes": 156,
+    "edges": 289,
+    "planar": false,
+    "algorithm": "KnitLayout",
+    "del": 0.2251,
+    "crossings": 24,
+    "required": 24,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 23.502,
+    "status": "ok"
+  },
+  {
+    "experiment": "C_cables",
+    "pattern": "honeycomb_cable",
+    "family": "cable",
+    "nodes": 156,
+    "edges": 289,
+    "planar": false,
+    "algorithm": "KnitGrid",
+    "del": 0.1481,
+    "crossings": 24,
+    "required": 24,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.249,
+    "status": "ok"
+  },
+  {
+    "experiment": "C_cables",
+    "pattern": "honeycomb_cable",
+    "family": "cable",
+    "nodes": 156,
+    "edges": 289,
+    "planar": false,
+    "algorithm": "Kamada-Kawai",
+    "del": 0.0806,
+    "crossings": 24,
+    "required": 24,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.446,
+    "status": "ok"
+  },
+  {
+    "experiment": "C_cables",
+    "pattern": "honeycomb_cable",
+    "family": "cable",
+    "nodes": 156,
+    "edges": 289,
+    "planar": false,
+    "algorithm": "SFDP",
+    "del": 0.1674,
+    "crossings": 24,
+    "required": 24,
+    "missing": 0,
+    "unexpected": 0,
+    "misplaced": 0,
+    "runtime_s": 0.881,
     "status": "ok"
   }
 ]

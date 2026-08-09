@@ -1,14 +1,3 @@
-"""Evaluation metrics from Section 6.2.
-
-* ``desired_edge_length`` implements the DEL measure of Eq. (1): the root mean
-  square of the *relative* edge-length error.  Because the comparison methods
-  (SFDP, Kamada-Kawai, the planar initialisation) do not know the absolute
-  target scale, we first apply the single uniform scale factor that minimises
-  the relative error -- this is the standard scale-invariant form of the
-  measure and gives every algorithm its best possible score.
-* ``count_crossings`` counts pairs of non-adjacent edges that properly cross.
-"""
-
 from __future__ import annotations
 
 import networkx as nx
@@ -30,14 +19,12 @@ def _points(g: nx.Graph, pos: dict) -> np.ndarray:
 
 
 def optimal_scale(distances: np.ndarray, lengths: np.ndarray) -> float:
-    """Scale s minimising sum((s*d - l)/l)^2  =>  s = sum(d/l) / sum((d/l)^2)."""
     ratio = distances / lengths
     denom = float(np.sum(ratio * ratio))
     return float(np.sum(ratio) / denom) if denom > 0 else 1.0
 
 
 def desired_edge_length(g: nx.Graph, pos: dict) -> float:
-    """DEL measure (Eq. 1).  Lower is better; 0 is perfect."""
     _, _, a, b, lengths = _edge_arrays(g)
     pts = _points(g, pos)
     d = np.linalg.norm(pts[a] - pts[b], axis=1)
@@ -61,8 +48,48 @@ def _segments_cross(p, q, r, s) -> bool:
     return (o1 > CROSS_EPS) != (o2 > CROSS_EPS) and (o3 > CROSS_EPS) != (o4 > CROSS_EPS)
 
 
+def _edge_key(u, v) -> tuple:
+    return (u, v) if u <= v else (v, u)
+
+
+def required_crossings(g: nx.Graph) -> set[frozenset[tuple]]:
+    return {
+        frozenset(signature["edges"])
+        for signature in g.graph.get("crossing_signature", [])
+    }
+
+
+def crossing_report(g: nx.Graph, pos: dict) -> dict[str, int]:
+    edges = list(g.edges())
+    actual: set[frozenset[tuple]] = set()
+    for i, (u1, v1) in enumerate(edges):
+        for u2, v2 in edges[i + 1:]:
+            if {u1, v1}.isdisjoint((u2, v2)) and _segments_cross(
+                pos[u1], pos[v1], pos[u2], pos[v2]
+            ):
+                actual.add(frozenset((_edge_key(u1, v1), _edge_key(u2, v2))))
+    required = required_crossings(g)
+    signature_rows = {
+        frozenset(signature["edges"]): signature["row"]
+        for signature in g.graph.get("crossing_signature", [])
+    }
+    misplaced = 0
+    for pair in actual & required:
+        row = signature_rows[pair]
+        for edge in pair:
+            if {g.nodes[edge[0]]["row"], g.nodes[edge[1]]["row"]} != {row - 1, row}:
+                misplaced += 1
+                break
+    return {
+        "crossings": len(actual),
+        "required": len(required),
+        "missing": len(required - actual),
+        "unexpected": len(actual - required),
+        "misplaced": misplaced,
+    }
+
+
 def count_crossings(g: nx.Graph, pos: dict) -> int:
-    """Number of properly crossing pairs of non-adjacent edges."""
     edges = list(g.edges())
     n = len(edges)
     count = 0

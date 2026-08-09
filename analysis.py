@@ -1,16 +1,3 @@
-"""Supplementary experiments (ablations and model checks).
-
-These back up the discussion in EVALUATION.md and the experiment catalogue:
-
-* initialisation ablation  -- NetworkX planar init vs. knitting-aware init;
-* convergence study        -- DEL vs. number of safe FDA iterations;
-* force ablation           -- effect of removing each of the three forces;
-* graph-model unit checks  -- node/edge counts per stitch match Table 1, and
-                              every generated graph is planar + knittable.
-
-Run:  python analysis.py
-"""
-
 from __future__ import annotations
 
 import time

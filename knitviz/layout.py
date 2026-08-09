@@ -1,35 +1,9 @@
-"""Algorithm 2 -- KnitLayout.
-
-Two stages (Section 5):
-
-1. **Initial layout** (Section 5.1): a crossing-free planar drawing.  The paper
-   uses NetworkX's ``planar_layout`` (Chrobak-Payne grid embedding), provided
-   here as :func:`planar_layout`.  We also provide :func:`knitting_layout`, the
-   knitting-structure-aware initialisation the authors motivate in Sections 5.1
-   and 7; it is the default because the literal grid embedding tends to trap the
-   hard-constraint step in a poor basin (see EVALUATION.md, initialisation
-   ablation).
-2. **Safe force-directed improvement** (Section 5.2): iteratively move nodes
-   under three forces while *never* introducing an edge crossing.  At every
-   step all target positions are computed first; then nodes are moved one at a
-   time and any move that would create a crossing is rejected (the node stays
-   put).
-
-The three forces are exactly those listed in the paper:
-
-* an **edge-length force**, attractive when an edge is longer than its target
-  length and repulsive when shorter;
-* a **collision force** keeping nodes from landing on top of one another;
-* a **universal electrostatic repulsion** between all node pairs that inflates
-  the (initially cramped) planar drawing and is annealed towards zero.
-"""
-
 from __future__ import annotations
 
 import networkx as nx
 import numpy as np
 
-from .metrics import CROSS_EPS, _edge_arrays, optimal_scale
+from .metrics import CROSS_EPS, _edge_arrays, crossing_report, optimal_scale, required_crossings
 
 
 # --------------------------------------------------------------------------- #
@@ -44,7 +18,6 @@ def planar_layout(g: nx.Graph) -> dict:
 
 
 def _scale_to_targets(g: nx.Graph, pos: dict) -> dict:
-    """Centre the drawing and rescale so its edges best match target lengths."""
     nodes = list(g.nodes())
     pts = np.array([pos[n] for n in nodes], float)
     pts -= pts.mean(axis=0)
@@ -55,20 +28,6 @@ def _scale_to_targets(g: nx.Graph, pos: dict) -> dict:
 
 
 def knitting_layout(g: nx.Graph, loop_length: float = 1.4) -> dict:
-    """A knitting-structure-aware, crossing-free initial layout.
-
-    Section 5.1 notes that the planar initialisation "does not take advantage of
-    the rich structure of knitting which may allow for more efficient
-    initializations"; the discussion further suggests that the creation order of
-    knitting "should make it possible to create better initializations."  This
-    routine realises that idea: it lays the stitches out row by row (rows become
-    horizontal layers) and places each new stitch above the loop(s) it is pulled
-    through, interpolating the position of yarn-overs / make-ones that have no
-    loop below them.  Because the within-row order is inherited from the loops
-    below, the result is crossing-free for class-0 patterns while already being
-    close to the target edge lengths -- an ideal starting point for the safe
-    force-directed improvement.
-    """
     rows: dict[int, list] = {}
     for nd, data in g.nodes(data=True):
         rows.setdefault(data["row"], []).append(nd)
@@ -114,6 +73,18 @@ def knitting_layout(g: nx.Graph, loop_length: float = 1.4) -> dict:
     return _scale_to_targets(g, pos)
 
 
+def cable_layout(g: nx.Graph, loop_length: float = 1.4) -> dict:
+    pos = {
+        nd: np.array([data["col"], -data["row"] * loop_length])
+        for nd, data in g.nodes(data=True)
+    }
+    pos = _scale_to_targets(g, pos)
+    report = crossing_report(g, pos)
+    if report["missing"] or report["unexpected"]:
+        raise ValueError(f"cable signature is not realized by its initial layout: {report}")
+    return pos
+
+
 # --------------------------------------------------------------------------- #
 # Stage 2: safe force-directed improvement
 # --------------------------------------------------------------------------- #
@@ -137,20 +108,20 @@ def knit_layout(
     initial: dict | None = None,
     seed: int | None = None,
 ) -> dict:
-    """Run KnitLayout and return ``{node: (x, y)}`` with no edge crossings."""
     nodes, idx, ea, eb, target = _edge_arrays(g)
     n = len(nodes)
     if initial is None:
-        initial = knitting_layout(g)
+        initial = cable_layout(g) if required_crossings(g) else knitting_layout(g)
     pts = np.array([initial[node] for node in nodes], dtype=float)
     incident = _build_incidence(g, idx, ea, eb)
+    required = required_crossings(g)
+    edge_keys = [frozenset(((min(u, v), max(u, v)))) for u, v in g.edges()]
 
     # characteristic length used by collision / repulsion forces
     L = float(np.mean(target))
     collide_d = collision_distance * L
 
     def move_is_safe(i: int, p: np.ndarray) -> bool:
-        """True if moving node i to p introduces no new edge crossing."""
         cx, cy = pts[ea, 0], pts[ea, 1]
         dx, dy = pts[eb, 0], pts[eb, 1]
         for e in incident[i]:
@@ -165,7 +136,12 @@ def knit_layout(
                 (o3 > CROSS_EPS) != (o4 > CROSS_EPS)
             )
             shares = (ea == iu) | (eb == iu) | (ea == iv) | (eb == iv)
-            if np.any(crosses & ~shares):
+            expected = np.fromiter(
+                (frozenset((edge_keys[e], edge_keys[f])) in required for f in range(len(ea))),
+                dtype=bool,
+                count=len(ea),
+            )
+            if np.any((crosses != expected) & ~shares):
                 return False
         return True
 

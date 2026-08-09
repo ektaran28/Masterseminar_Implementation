@@ -1,33 +1,11 @@
-"""Stitch dictionary -- Table 1 of Gray, Bell & Kobourov (2024).
-
-Each stitch is described by how many new loops it *creates* on the needle
-(``add``) and how many loops *below* it consumes / connects to (``below``).
-These two numbers fully determine the edges that Algorithm 1 adds to the graph:
-
-* ``add`` new nodes are created and chained to the previous node with a
-  *yarn* edge (the sequential "along the needle" connection);
-* each new node is linked to every consumed lower node with a *loop* edge
-  (the "pulled through" connection).
-
-The paper also notes that stitches are generally taller than they are wide,
-so we attach two base edge lengths: a (short) yarn/row length and a (long)
-loop/column length.  Some stitches -- e.g. dropped stitches -- stretch the
-yarn edge, which is captured by ``yarn_factor``.
-
-Stitches whose graph contains crossings (cables) are *not* planar and belong
-to complexity class >= 1 (Table 2); they are marked ``planar=False`` and are
-excluded from the class-0 layout experiments.
-"""
-
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class Stitch:
-    """One entry of the stitch dictionary."""
-
     name: str
     add: int           # number of new loops created on the needle
     below: int         # number of loops below that are connected / consumed
@@ -35,6 +13,9 @@ class Stitch:
     yarn_factor: float = 1.0   # multiplies the base yarn (row) edge length
     loop_factor: float = 1.0   # multiplies the base loop (column) edge length
     description: str = ""
+    cable_hold: int = 0        # held stitches in a class-1 cable
+    cable_shift: int = 0       # left/right block permutation on the next row
+    cable_front: bool = False  # held block passes in front instead of behind
 
 
 # The class-0 stitch dictionary used throughout the planar experiments.
@@ -55,8 +36,10 @@ STITCHES: dict[str, Stitch] = {
     # it behaves like a knit, but the yarn edge is stretched.
     "drop": Stitch("drop", add=1, below=1, yarn_factor=3.0, description="dropped stitch"),
     # Cables -- class 1 (non-planar): edges acquire a front/back orientation.
-    "c1b": Stitch("c1b", add=2, below=2, planar=False, description="cable one behind"),
-    "c2b": Stitch("c2b", add=4, below=4, planar=False, description="cable two behind"),
+    "c1b": Stitch("c1b", add=2, below=2, planar=False, description="cable one behind", cable_hold=1, cable_shift=1),
+    "c2b": Stitch("c2b", add=4, below=4, planar=False, description="cable two behind", cable_hold=2, cable_shift=2),
+    "c1f": Stitch("c1f", add=2, below=2, planar=False, description="cable one front", cable_hold=1, cable_shift=-1, cable_front=True),
+    "c2f": Stitch("c2f", add=4, below=4, planar=False, description="cable two front", cable_hold=2, cable_shift=-2, cable_front=True),
 }
 
 
@@ -67,10 +50,19 @@ BASE_LOOP_LENGTH = 1.4
 
 
 def is_known(token: str) -> bool:
-    return token in STITCHES
+    return token in STITCHES or bool(re.fullmatch(r"c[1-9]\d*[bf]", token))
 
 
 def get(token: str) -> Stitch:
-    if token not in STITCHES:
+    if token in STITCHES:
+        return STITCHES[token]
+    match = re.fullmatch(r"c([1-9]\d*)([bf])", token)
+    if not match:
         raise KeyError(f"Unknown stitch token: {token!r}")
-    return STITCHES[token]
+    held, side = int(match.group(1)), match.group(2)
+    return Stitch(
+        token, add=2 * held, below=2 * held, planar=False,
+        description=f"cable {held} {'front' if side == 'f' else 'behind'}",
+        cable_hold=held, cable_shift=-held if side == "f" else held,
+        cable_front=side == "f",
+    )
